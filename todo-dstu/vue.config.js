@@ -3,5 +3,5 @@ module.exports = defineConfig({
   transpileDependencies: true
 })
 module.exports = {
-  publicPath: '/vue-todo-app/'
+  publicPath: '/todo-dstu/'
 }

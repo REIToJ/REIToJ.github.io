@@ -1,7 +1,7 @@
-# vue-todo-app
+# todo-dstu
 
 ## Visit the website here
-https://thenitpickycloud.github.io/vue-todo-app/#/
+https://thenitpickycloud.github.io/todo-dstu/#/
 
 ## Project setup
 ```
