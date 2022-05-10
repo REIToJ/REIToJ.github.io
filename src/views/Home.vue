@@ -9,22 +9,28 @@
     <span :class="{'navs' : !view_all, 'navs-active' : view_all}" @click="selectNav(1)">VIEW ALL</span>
     <span :class="{'navs' : !completed, 'navs-active' : completed}" @click="selectNav(2)">COMPLETED</span>
     <span :class="{'navs' : !ongoing, 'navs-active' : ongoing}" @click="selectNav(3)">ONGOING</span>
+    <span :class="{'navs' : !datanav, 'navs-active' : datanav}" @click="selectNav(5)">BY DATA</span>
     <span :class="{'navsPlus' : !addit, 'navs-activePlus' : addit}" @click="selectNav(4)">+</span>
   </div>
 
   <div v-if="view_all">
     <div class="content" v-for="todo in todos" :key="todo">
-      <Todo :content="todo.content" :id="todo.id" :progress="todo.inProgress" @changedProgress="toggleOngoing" @remmed="removeTodo" @updatedContent="changeContent"/>
+      <Todo :content="todo.content" :id="todo.id" :progress="todo.inProgress" :date="todo.date" @changedProgress="toggleOngoing" @remmed="removeTodo" @updatedContent="changeContent"/>
     </div>
   </div>
   <div v-if="completed">
     <div class="content" v-for="todo in Completed" :key="todo">
-      <Todo :content="todo.content" :id="todo.id" :progress="todo.inProgress" @changedProgress="toggleOngoing" @remmed="removeTodo" @updatedContent="changeContent"/>
+      <Todo :content="todo.content" :id="todo.id" :progress="todo.inProgress" :date="todo.date" @changedProgress="toggleOngoing" @remmed="removeTodo" @updatedContent="changeContent"/>
     </div>
   </div>
   <div v-if="ongoing">
     <div class="content" v-for="todo in Ongoing" :key="todo">
-     <Todo :content="todo.content" :id="todo.id" :progress="todo.inProgress" @changedProgress="toggleOngoing" @remmed="removeTodo" @updatedContent="changeContent"/>
+     <Todo :content="todo.content" :id="todo.id" :progress="todo.inProgress" :date="todo.date" @changedProgress="toggleOngoing" @remmed="removeTodo" @updatedContent="changeContent"/>
+    </div>
+  </div>
+    <div v-if="datanav">
+    <div class="content" >
+      <TodoGroup v-for="group in Datanav" :todos="group" :key="group"/>  
     </div>
   </div>
   <div v-if="addit">
@@ -37,11 +43,13 @@ import { computed, ref } from 'vue'
 import Todo from "../components/Todo.vue"
 import NewTodo from "../components/NewTodo.vue"
 import UserInfo from "../components/UserInfo.vue"
+import TodoGroup from "../components/TodoGroup.vue"
+import TodoListItem from "../components/TodoListItem.vue"
 
 export default {
   name: 'HomeView',
   components: {
-    Todo, NewTodo, UserInfo,
+    Todo, NewTodo, UserInfo, TodoGroup, TodoListItem
   },
   setup(){
     //initial navigation
@@ -50,6 +58,8 @@ export default {
     const completed = ref(false)
     const ongoing = ref(false)
     const addit = ref(false)
+    const datanav = ref(false)
+    let dataGroupDone = [];
 
     function selectNav(num){
       if(view_all.value && num != 1){
@@ -64,6 +74,9 @@ export default {
       if(addit.value && num != 4){
         addit.value = false;
       }
+      if(datanav.value && num != 5){
+        datanav.value = false;
+      }
 
       if(num == 1){
         view_all.value = true;
@@ -74,24 +87,62 @@ export default {
       else if(num == 3){
         ongoing.value = true;
       }
-      else{
+      else if (num ==4){
         addit.value = true;
       }
+      else {
+        datanav.value = true;
+
+
+     }
     }
 
     //main todo content
 
     let todos = ref([
-      {content: "This is a Todo", inProgress: true, id: 1},
-      {content: "This is another Todo", inProgress: true, id: 2},
-      {content: "This is yet another Todo", inProgress: false, id: 3},
+      {content: "This is a Todo", inProgress: true, date:"24.11.2001", id: 1},
+      {content: "This is another Todo", inProgress: true, date:"23.11.2001", id: 2},
+      {content: "This is yet another Todo", inProgress: false, date:"23.11.2001", id: 3},
     ])
+    
 
     const Completed = computed(() => {
       return todos.value.filter((todo) => todo.inProgress === false)
+
     })
     const Ongoing = computed(() => {
       return todos.value.filter((todo) => todo.inProgress === true)
+    })
+    let Datanav = computed(() => {
+              let Data = []
+        for (let i = 0; i < todos.value.length; i++) {
+
+          Data.push(todos.value[i].date)
+        }
+        let uniqueData = [...new Set(Data)]
+        let dataGroup=[];
+       
+          
+        for (let i = 0; i < uniqueData.length; i++) {
+          let temp = []
+         
+          for (let j = 0; j < todos.value.length; j++) {
+           
+            if (todos.value[j].date == uniqueData[i]) {
+            
+              temp.push(todos.value[j])
+            
+            } 
+          }
+          dataGroup.push(temp)
+         
+          
+
+        }    
+                dataGroupDone = dataGroup
+                 
+
+        return dataGroupDone
     })
 
     function toggleOngoing(theId){
@@ -111,19 +162,20 @@ export default {
       })
     }
 
-    function updateTodos(stuff){
-      todos.value.push({content: stuff, inProgress: true, id: todos.value.length + 1})
+    function updateTodos(stuff, stuff2){
+      todos.value.push({content: stuff, date:stuff2, inProgress: true, id: todos.value.length + 1})
     }
 
-    function changeContent(theId, newContent){
+    function changeContent(theId, newContent, newDate){
       todos.value.forEach((todo) => {
         if(todo.id == theId){
           todo.content = newContent
+          todo.date = newDate
         }
       })
     }
-
-    return {view_all, completed, ongoing, addit, selectNav, todos, Completed, Ongoing, toggleOngoing, removeTodo, updateTodos, changeContent}
+    let array = [[{content:'aaa'}],[{content:'bbb'}]]
+    return {view_all, completed, ongoing, addit, selectNav, todos, dataGroupDone, Completed, Ongoing, datanav, Datanav, array,  toggleOngoing, removeTodo, updateTodos, changeContent}
   }
 }
 </script>

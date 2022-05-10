@@ -1,26 +1,9 @@
 <template>
   <div class="todo">
     <div class="colorline" :class="{'colorLineDoneCompleted': !progress}"/>
+    <div class="colorline2" :class="{'colorLineDoneCompleted': !progress}"/>
     <div class="todobg"/>
-    <div v-if="!editing">
       <div class="todotext" :class="{'textDoneCompleted': !progress}"> {{ content }}  </div>
-      <div class="tododate" :class="{'textDoneCompleted': !progress}"> {{ date }}  </div>
-      <div class="controlButtons">
-        <button class="controlButtonEdit material-icons" @click="nowEditing">edit</button>
-        <button class="controlButtonDone material-icons" :class="{'controlButtonDoneCompleted': !progress}" @click="toggleTodo">done</button>
-        <button class="controlButtonCancel material-icons" @click="rem">cancel</button>
-      </div>
-    </div>
-    <div v-else>
-      <div class="todotext">
-        <input class="todoinput" @keydown.enter="updateTodo" v-model="newContent"/>
-        <input class="todoinput" @keydown.enter="updateTodo" v-model="newDate"/>
-      </div>
-      <div class="controlButtons">
-          <button class="controlButtonAdd material-icons" @click="updateTodo">done</button>
-          <button class="controlButtonCancel material-icons" @click="cancelUpdateTodo">cancel</button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -30,37 +13,6 @@ import { ref } from 'vue'
 export default {
   props: ['content', 'id', 'progress', 'date'],
   emits: ['changedProgress', 'remmed', 'updatedContent'],
-  setup(props, { emit }){
-
-    const editing = ref(false)
-    const newContent = ref('')
-    const newDate = ref('')
-
-    function toggleTodo(){
-      emit('changedProgress', props.id)
-    }
-    function rem(){
-      emit('remmed', props.id)
-    }
-    function nowEditing(){
-      editing.value = true
-      newContent.value = props.content
-      newDate.value = props.date
-    }
-    function updateTodo(){
-      if((newContent.value.length > 0) && (newDate.value.length > 0)){
-        emit('updatedContent', props.id, newContent.value, newDate.value)
-        newContent.value = ''
-        newDate.value=''
-        editing.value = false
-      }
-    }
-    function cancelUpdateTodo(){
-      editing.value = false
-    }
-
-    return{ toggleTodo, rem, editing, newDate, newContent, nowEditing, updateTodo, cancelUpdateTodo }
-  }
 }
 </script>
 
@@ -68,7 +20,7 @@ export default {
 .todo{
   position: relative;
   height: 100px;
-  width: 700px;
+  width: 500px;
   margin: auto;
   text-align: center;
 }
@@ -95,26 +47,41 @@ export default {
   height: 96%;
   width: 100%;
 }
+.colorline2{
+  position: absolute;
+  top: 2%;
+  left: 1%;
+  right: 10;
+  margin: auto;
+  z-index: -2;
+  margin: auto ;
+  background: coral;
+  border-radius: 20px;
+  height: 96%;
+  width: 100%;
+}
 .colorLineDoneCompleted{
    background: green; 
 }
 .todotext{
+    font-size: 20px;
   position: absolute;
-  margin-left: 8%;
+  margin-left: 16%;
   display: flex;
-  justify-content: left;
-  text-align: left;
+  justify-content: center;
+  text-align: center;
   align-items: center;
   height: 100%;
   width: 67%;
 }
 .tododate{
+    font-size: 20px;
   position: absolute;
-  margin-left: 8%;
+  margin-left: 15%;
   margin-top: 3%;
   display: flex;
-  justify-content: left;
-  text-align: left;
+  justify-content: center;
+  text-align: center;
   align-items: center;
   height: 100%;
   width: 67%;

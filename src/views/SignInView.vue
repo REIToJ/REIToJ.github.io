@@ -4,18 +4,11 @@
       <div
         class="col-12 col-sm-8 col-md-6 col-lg-4 offset-0 offset-sm-2 offset-md-3 offset-lg-4"
       >
-        <form @submit="loginWithEmailAndPassword">
+        <form @submit.prevent="loginWithEmailAndPassword">
           <div class="mb-3 text-center">
             <h1>DSTU To-Do</h1>
           </div>
           <hr />
-          <!-- <div
-            class="mb-3 border bg-warning border-warning rounded p-2"
-            style="--bs-bg-opacity: 0.2"
-            v-if="!!this.message"
-          >
-            {{ this.message }}
-          </div> -->
           <div class="mb-3">
             <label class="form-label" for="email">Email</label>
             <input
@@ -64,6 +57,8 @@
 </template>
 
 <script>
+import {reactive} from 'vue';
+import {useRouter} from "vue-router";
 export default {
   name: "SignInView",
   data() {
@@ -75,18 +70,19 @@ export default {
     };
   },
   
-  methods:{
-    loginWithEmailAndPassword(e){
-        e.preventDefault()
-    const formData = {
-        email: this.email,
-        password: this.password,
-      } 
-      console.log(formData) 
-      this.$router.push('/')
-  }
+  
+  // methods:{
+  //   loginWithEmailAndPassword(e){
+  //       e.preventDefault()
+  //   const formData = {
+  //       email: this.email,
+  //       password: this.password,
+  //     } 
+  //     console.log(formData) 
+  //     this.$router.push('/')
+  // }
  
-  },
+  // },
    
 }
 

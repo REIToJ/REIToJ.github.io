@@ -4,18 +4,11 @@
       <div
         class="col-12 col-sm-8 col-md-6 col-lg-4 offset-0 offset-sm-2 offset-md-3 offset-lg-4"
       >
-        <form @submit="this.signUpWithEmailAndPassword">
+        <form @submit.prevent="signUpWithEmailAndPassword">
           <div class="mb-3 text-center">
             <h1>DSTU To-Do</h1>
           </div>
           <hr />
-          <!-- <div
-            class="mb-3 border bg-warning border-warning rounded p-2"
-            style="--bs-bg-opacity: 0.2"
-            v-if="!!this.message"
-          >
-            {{ this.message }}
-          </div> -->
           <div class="mb-3">
             <label class="form-label" for="email">Email</label>
             <input
@@ -24,7 +17,19 @@
               name="email"
               id="email"
               placeholder="name@example.com"
-              v-model="this.email"
+              v-model="data.email"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="username">Username</label>
+            <input
+              class="form-control"
+              type="text"
+              name="username"
+              id="username"
+              placeholder="Your username"
+              v-model="data.username"
               required
             />
           </div>
@@ -36,7 +41,7 @@
                 class="form-control"
                 name="password"
                 placeholder="Your secure password"
-                v-model="this.password"
+                v-model="data.password"
                 required
               />
               <div class="input-group-text">
@@ -65,26 +70,50 @@
 </template>
 
 <script>
+    import {reactive} from 'vue';
+    import {useRouter} from "vue-router";
 export default {
   name: "SignUpView",
   data() {
     return {
       email: "",
+      username:"",
       password: "",
       message: "",
       isPasswordVisible: false,
     };
   },
-  methods: {
-    async signUpWithEmailAndPassword(event) {
-      event.preventDefault();
+  setup() {
 
-      const formData = {
-        email: this.email,
-        password: this.password,
-      };
-        console.log(formData) 
-    },
+    const data = reactive({
+      email: '',
+      username:'',
+      password: ''
+    });
+    const router = useRouter();
+    const signUpWithEmailAndPassword = async () => {
+      await fetch('http://localhost:5000/api/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+      await router.push('/sign-in');
+    }
+     return {
+      data,
+      signUpWithEmailAndPassword
+    }
   },
+  // methods: {
+  //   async signUpWithEmailAndPassword(event) {
+  //     event.preventDefault();
+
+  //     const formData = {
+  //       email: this.email,
+  //       password: this.password,
+  //     };
+  //       console.log(formData) 
+  //   },
+  // },
 };
 </script>

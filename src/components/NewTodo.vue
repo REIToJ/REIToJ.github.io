@@ -8,7 +8,10 @@
         <div class="todotext"> 
             Content:
             <input type="text" class="todoinput" @keydown.enter="addNewTodo" v-model="content"/>
+             Date:
+            <input type="text" class="todoinput" @keydown.enter="addNewTodo" v-model="date"/>
         </div>
+      
         <div class="controlButtons">
             <button class="controlButtonAdd" @click="addNewTodo">Add</button>
             <button class="controlButtonCancel" @click="clearNewTodo">Clear</button>
@@ -24,19 +27,22 @@ export default {
     emits: ['addtodo'],
     setup(props, { emit }){
         const content = ref('')
+        const date = ref('')
 
         function clearNewTodo(){
             content.value = ''
+            date.value = ''
         }
 
         function addNewTodo(){
-            if(content.value.length > 0){
-                emit('addtodo', content.value)
+            if((content.value.length > 0) && (date.value.length >0)){
+                emit('addtodo', content.value, date.value)
                 content.value = ''
+                date.value = ''
             }
         }
 
-        return {content, clearNewTodo, addNewTodo}
+        return {content, date, clearNewTodo, addNewTodo}
     }
 }
 </script>
