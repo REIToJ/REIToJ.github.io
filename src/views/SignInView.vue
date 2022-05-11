@@ -16,7 +16,7 @@
               type="email"
               name="email"
               id="email"
-              v-model="this.email"
+              v-model="data.email"
               placeholder="name@example.com"
               required
             />
@@ -29,7 +29,7 @@
                 class="form-control"
                 name="password"
                 placeholder="Your secure password"
-                v-model="this.password"
+                v-model="data.password"
                 required
               />
               <div class="input-group-text">
@@ -59,6 +59,7 @@
 <script>
 import {reactive} from 'vue';
 import {useRouter} from "vue-router";
+import axios from "axios";
 export default {
   name: "SignInView",
   data() {
@@ -69,7 +70,26 @@ export default {
       isPasswordVisible: false,
     };
   },
-  
+    setup() {
+
+    const data = reactive({
+      email: '',
+      password: ''
+    });
+    const router = useRouter();
+    const loginWithEmailAndPassword = async () => {
+      await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+      await router.push('/');
+    }
+     return {
+      data,
+      loginWithEmailAndPassword
+    }
+  },
   
   // methods:{
   //   loginWithEmailAndPassword(e){
