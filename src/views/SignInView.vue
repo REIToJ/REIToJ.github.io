@@ -21,6 +21,18 @@
               required
             />
           </div>
+          <div class="mb-3">
+            <label class="form-label" for="username">Username</label>
+            <input
+              class="form-control"
+              type="text"
+              name="username"
+              id="username"
+              placeholder="Your username"
+              v-model="data.username"
+              required
+            />
+          </div>
           <div class="mb-4">
             <label class="form-label" for="password">Password</label>
             <div class="input-group mb-3">
@@ -70,17 +82,20 @@ export default {
       isPasswordVisible: false,
     };
   },
-    setup() {
-
+  
+   setup() {
     const data = reactive({
       email: '',
+      username:'',
       password: ''
     });
     const router = useRouter();
     const loginWithEmailAndPassword = async () => {
       await fetch('http://localhost:5000/api/login', {
         method: 'POST',
+        mode: 'no-cors',
         headers: {'Content-Type': 'application/json'},
+        credentials: 'include',
         body: JSON.stringify(data)
       });
       await router.push('/');

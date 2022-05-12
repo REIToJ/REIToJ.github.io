@@ -95,6 +95,7 @@ export default {
     const signUpWithEmailAndPassword = async () => {
       await fetch('http://localhost:5000/api/Authentication/register', {
         method: 'POST',
+        mode: 'no-cors',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
       });
