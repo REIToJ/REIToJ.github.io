@@ -45,6 +45,7 @@ import NewTodo from "../components/NewTodo.vue"
 import UserInfo from "../components/UserInfo.vue"
 import TodoGroup from "../components/TodoGroup.vue"
 import TodoListItem from "../components/TodoListItem.vue"
+import axios from "axios";
 
 export default {
   name: 'HomeView',
@@ -98,7 +99,7 @@ export default {
     }
 
     //main todo content
-
+    
     let todos = ref([
       {content: "This is a Todo", inProgress: true, date:"24.11.2001", id: 1},
       {content: "This is another Todo", inProgress: true, date:"23.11.2001", id: 2},
@@ -174,9 +175,35 @@ export default {
         }
       })
     }
-    let array = [[{content:'aaa'}],[{content:'bbb'}]]
-    return {view_all, completed, ongoing, addit, selectNav, todos, dataGroupDone, Completed, Ongoing, datanav, Datanav, array,  toggleOngoing, removeTodo, updateTodos, changeContent}
-  }
+    return {view_all, completed, ongoing, addit, selectNav, todos, dataGroupDone, Completed, Ongoing, datanav, Datanav,  toggleOngoing, removeTodo, updateTodos, changeContent}
+  },
+  methods:{
+    
+    // async loginWithEmailAndPassword() {
+    //         const data = await axios.request({
+    //           url: 'http://localhost:5000/api/Authentication/login',
+    //             method: 'get',
+    //             headers: {
+    //                 'Authorisation': 'Bearer TOKEN'
+    //             }
+    //         }
+    //             ,
+    //             {username:this.username,
+    //             email:this.email,
+    //             password:this.password})
+    //               .then(function (response) {
+    //                 console.log(response);
+    //               console.log(response.data.token);
+    //               localStorage.setItem("userToken", response.data.token)
+    //               console.log(localStorage.getItem("userToken"))
+    //             })
+    //             .catch(function (error) {
+    //               console.log(error);
+    //             });
+              
+    //         await this.$router.push('/')
+    //       },
+  },
 }
 </script>
 

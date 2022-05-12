@@ -86,15 +86,15 @@ export default {
   methods: {
 
       async loginWithEmailAndPassword() {
-        const data = await axios.post(
+        const data = await axios.request(
             'http://localhost:5000/api/Authentication/login',
             {username:this.username,
             email:this.email,
             password:this.password})
               .then(function (response) {
                 console.log(response);
-              console.log(response.token);
-              localStorage.setItem("userToken", response.token)
+              console.log(response.data.token);
+              localStorage.setItem("userToken", response.data.token)
               console.log(localStorage.getItem("userToken"))
             })
             .catch(function (error) {
