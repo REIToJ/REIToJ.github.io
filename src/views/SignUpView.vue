@@ -17,7 +17,7 @@
               name="email"
               id="email"
               placeholder="name@example.com"
-              v-model="data.email"
+              v-model="email"
               required
             />
           </div>
@@ -29,7 +29,7 @@
               name="username"
               id="username"
               placeholder="Your username"
-              v-model="data.username"
+              v-model="username"
               required
             />
           </div>
@@ -41,7 +41,7 @@
                 class="form-control"
                 name="password"
                 placeholder="Your secure password"
-                v-model="data.password"
+                v-model="password"
                 required
               />
               <div class="input-group-text">
@@ -80,32 +80,50 @@ export default {
       email: "",
       username:"",
       password: "",
-      message: "",
       isPasswordVisible: false,
     };
   },
-  setup() {
+  methods: {
 
-    const data = reactive({
-      email: '',
-      username:'',
-      password: ''
-    });
-    const router = useRouter();
-    const signUpWithEmailAndPassword = async () => {
-      await fetch('http://localhost:5000/api/Authentication/register', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-      });
-      await router.push('/sign-in');
+      async signUpWithEmailAndPassword() {
+        const data = await axios.post(
+            'http://localhost:5000/api/Authentication/register',
+            {username:this.username,
+            email:this.email,
+            password:this.password})
+              .then(function (response) {
+              console.log(response);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+          
+        await this.$router.push('/sign-in')
+      },
     }
-     return {
-      data,
-      signUpWithEmailAndPassword
-    }
-  },
+  }
+  // setup() {
+
+  //   const data = reactive({
+  //     email: '',
+  //     username:'',
+  //     password: ''
+  //   });
+  //   const router = useRouter();
+  //   const signUpWithEmailAndPassword = async () => {
+  //     await fetch('http://localhost:5000/api/Authentication/register', {
+  //       method: 'POST',
+  //       mode: 'no-cors',
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: JSON.stringify(data)
+  //     });
+  //     await router.push('/sign-in');
+  //   }
+  //    return {
+  //     data,
+  //     signUpWithEmailAndPassword
+  //   }
+  // },
   // methods: {
   //   async signUpWithEmailAndPassword(event) {
   //     event.preventDefault();
@@ -117,5 +135,5 @@ export default {
   //       console.log(formData) 
   //   },
   // },
-};
+//};
 </script>

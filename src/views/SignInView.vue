@@ -16,7 +16,7 @@
               type="email"
               name="email"
               id="email"
-              v-model="data.email"
+              v-model="email"
               placeholder="name@example.com"
               required
             />
@@ -29,7 +29,7 @@
               name="username"
               id="username"
               placeholder="Your username"
-              v-model="data.username"
+              v-model="username"
               required
             />
           </div>
@@ -41,7 +41,7 @@
                 class="form-control"
                 name="password"
                 placeholder="Your secure password"
-                v-model="data.password"
+                v-model="password"
                 required
               />
               <div class="input-group-text">
@@ -78,33 +78,58 @@ export default {
     return {
       email: "",
       password: "",
-      message: "",
+      username: "",
       isPasswordVisible: false,
     };
+    
   },
+  methods: {
+
+      async loginWithEmailAndPassword() {
+        const data = await axios.post(
+            'http://localhost:5000/api/Authentication/login',
+            {username:this.username,
+            email:this.email,
+            password:this.password})
+              .then(function (response) {
+                console.log(response);
+              console.log(response.token);
+              localStorage.setItem("userToken", response.token)
+              console.log(localStorage.getItem("userToken"))
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+          
+        await this.$router.push('/')
+      },
+    }
+}
   
-   setup() {
-    const data = reactive({
-      email: '',
-      username:'',
-      password: ''
-    });
-    const router = useRouter();
-    const loginWithEmailAndPassword = async () => {
-      await fetch('http://localhost:5000/api/login', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {'Content-Type': 'application/json'},
-        credentials: 'include',
-        body: JSON.stringify(data)
-      });
-      await router.push('/');
-    }
-     return {
-      data,
-      loginWithEmailAndPassword
-    }
-  },
+  //  setup() {
+  //   const data = reactive({
+  //     email: '',
+  //     username:'',
+  //     password: ''
+  //   });
+  //   const router = useRouter();
+  //   const loginWithEmailAndPassword = async () => {
+  //     await fetch('http://localhost:5000/api/Authentication/login', {
+  //       method: 'POST',
+  //       mode: 'no-cors',
+  //       headers: {'Content-Type': 'application/json'},
+  //       credentials: 'include',
+  //       body: {"email":data.email,
+  //               "username":data.username,
+  //               "password":data.password}
+  //     });
+  //     await router.push('/');
+  //   }
+  //    return {
+  //     data,
+  //     loginWithEmailAndPassword
+  //   }
+  // },
   
   // methods:{
   //   loginWithEmailAndPassword(e){
@@ -118,7 +143,35 @@ export default {
   // }
  
   // },
+  //       async authorization() {
+  //       if (this.login === '' && this.password === '') {
+  //         alert('Поля авторизации пустое')
+  //         return
+  //       }
+  //       const data = await axios.post(
+  //           'http://localhost:7028/graphql/',
+  //           {query:`mutation {
+  //     authUser (userInput :{
+  //     username: "${this.login}"
+  //     password: "${this.password}"
+  //   }) {
+  //     token
+  //     error
+  //     status
+  //   }
+  // }`})
+  //       if (data.data.data.authUser.error === "User is not exist") {
+  //         alert('Пользователь не найден. Зарегистриуйтесь, пожалуйста')
+  //         return
+  //       }
+  //       if (data.data.data.authUser.error === "Password is not correct") {
+  //         alert('Пароль неверен. Попробуйте ещё раз')
+  //         return
+  //       }
+  //       localStorage.setItem("userToken", data.data.data.authUser.token)
+  //       this.$router.push('/posts')
+  //     },
    
-}
+
 
   </script>
