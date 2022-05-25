@@ -52,15 +52,20 @@ export default {
   components: {
     Todo, NewTodo, UserInfo, TodoGroup, TodoListItem
   },
+  data(){
+    return {
+   todos: [
+    ]}
+  },
   setup(){
     //initial navigation
 
     const view_all = ref(true)
     const completed = ref(false)
     const ongoing = ref(false)
-    const addit = ref(false)
+     const addit = ref(false)
     const datanav = ref(false)
-    let dataGroupDone = [];
+  //   let dataGroupDone = [];
 
     function selectNav(num){
       if(view_all.value && num != 1){
@@ -98,24 +103,131 @@ export default {
      }
     }
 
-    //main todo content
-    
-    let todos = ref([
-      {content: "This is a Todo", inProgress: true, date:"24.11.2001", id: 1},
-      {content: "This is another Todo", inProgress: true, date:"23.11.2001", id: 2},
-      {content: "This is yet another Todo", inProgress: false, date:"23.11.2001", id: 3},
-    ])
-    
+ 
+    return {view_all, selectNav, addit, completed, ongoing, datanav,
+     
+    }
+  },
+  methods:{
 
-    const Completed = computed(() => {
-      return todos.value.filter((todo) => todo.inProgress === false)
+        toggleOngoing(theId){
+          console.log("Зашел")
+          console.log("Айди"+theId)
+      this.todos.forEach((todo) => {
+        if(todo.id == theId){
+          todo.inProgress = !todo.inProgress
+          this.changePost(todo)
+        }
+        
+      })
+    },
+        removeTodo(theId){
+      let idx = 1
+      this.todos = this.todos.filter((todo) => todo.id != theId)
+      this.deletePost(theId)
+      this.todos.forEach((todo) => {
+        todo.id = idx;
+        this.changePost(todo)
+        idx++
+      })
+    },
 
-    })
-    const Ongoing = computed(() => {
-      return todos.value.filter((todo) => todo.inProgress === true)
-    })
-    let Datanav = computed(() => {
-              let Data = []
+        updateTodos(stuff, stuff2){
+      this.todos.push({content: stuff, date:stuff2, inProgress: true, id: this.todos.length + 1})
+      this.sendPost(this.todos[lenght])
+    },
+
+         changeContent(theId, newContent, newDate){
+      this.todos.forEach((todo) => {
+        if(todo.id == theId){
+          todo.content = newContent
+          todo.date = newDate
+          this.changePost(todo)
+        }
+      })
+    },
+     async fetchPosts() {
+        const data = await axios.get(
+            'http://localhost:5000/api/ToDoItems',
+            {token: localStorage.getItem("userToken")})
+              .then(function (response) {
+               this.todos.push(response)
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+      },
+      async sendPosts() {
+        for (let i=0; i < this.todos.lenght; i++){
+        const data = await axios.post(
+            'http://localhost:5000/api/toDoItems',
+            {id: this.todos[i].id,
+            content: this.todos[i].content,
+            inProgress: this.todos[i].inProgress,
+            date:this.todos[i].date,
+            token: localStorage.getItem("userToken")})
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+      },
+      async sendPost(todo) {
+        
+        const data = await axios.post(
+            'http://localhost:5000/api/toDoItem',
+            {id: this.todo.id,
+            content: this.todo.content,
+            inProgress: this.todo.inProgress,
+            date:this.todo.date,
+            token: localStorage.getItem("userToken")})
+            .catch(function (error) {
+              console.log(error);
+            });
+        
+      },
+      async changePost(todo) {
+        
+        const data = await axios.put(
+            `http://localhost:5000/api/toDoItem/${todo.id}`,
+            {id: this.todo.id,
+            content: this.todo.content,
+            inProgress: this.todo.inProgress,
+            date:this.todo.date,
+            token: localStorage.getItem("userToken")})
+            .catch(function (error) {
+              console.log(error);
+            });
+        
+      },
+       async deletePost(theId) {
+        
+        const data = await axios.delete(
+            `http://localhost:5000/api/toDoItem/${theId}`,
+            {
+            token: localStorage.getItem("userToken")})
+            .catch(function (error) {
+              console.log(error);
+            });
+        
+      },
+
+     
+      
+    
+    
+  },
+      mounted() {
+      this.fetchPosts();
+    },
+    computed: {
+      Ongoing(){
+        return todos.value.filter((todo) => todo.inProgress === true)
+      },
+      Completed(){
+        return todos.value.filter((todo) => todo.inProgress === false)
+      },
+      Datanav(){
+ let Data = []
         for (let i = 0; i < todos.value.length; i++) {
 
           Data.push(todos.value[i].date)
@@ -144,66 +256,8 @@ export default {
                  
 
         return dataGroupDone
-    })
-
-    function toggleOngoing(theId){
-      todos.value.forEach((todo) => {
-        if(todo.id == theId){
-          todo.inProgress = !todo.inProgress
-        }
-      })
+      },
     }
-
-    function removeTodo(theId){
-      let idx = 1
-      todos.value = todos.value.filter((todo) => todo.id != theId)
-      todos.value.forEach((todo) => {
-        todo.id = idx;
-        idx++
-      })
-    }
-
-    function updateTodos(stuff, stuff2){
-      todos.value.push({content: stuff, date:stuff2, inProgress: true, id: todos.value.length + 1})
-    }
-
-    function changeContent(theId, newContent, newDate){
-      todos.value.forEach((todo) => {
-        if(todo.id == theId){
-          todo.content = newContent
-          todo.date = newDate
-        }
-      })
-    }
-    return {view_all, completed, ongoing, addit, selectNav, todos, dataGroupDone, Completed, Ongoing, datanav, Datanav,  toggleOngoing, removeTodo, updateTodos, changeContent}
-  },
-  methods:{
-    
-    // async loginWithEmailAndPassword() {
-    //         const data = await axios.request({
-    //           url: 'http://localhost:5000/api/Authentication/login',
-    //             method: 'get',
-    //             headers: {
-    //                 'Authorisation': 'Bearer TOKEN'
-    //             }
-    //         }
-    //             ,
-    //             {username:this.username,
-    //             email:this.email,
-    //             password:this.password})
-    //               .then(function (response) {
-    //                 console.log(response);
-    //               console.log(response.data.token);
-    //               localStorage.setItem("userToken", response.data.token)
-    //               console.log(localStorage.getItem("userToken"))
-    //             })
-    //             .catch(function (error) {
-    //               console.log(error);
-    //             });
-              
-    //         await this.$router.push('/')
-    //       },
-  },
 }
 </script>
 
