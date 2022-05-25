@@ -190,10 +190,13 @@ export default {
     async fetchPosts() {
       const data = await axios
         .get("http://localhost:5000/api/ToDoItems", {
-          token: localStorage.getItem("userToken"),
+          headers: {
+            Authorization: `Bearer${localStorage.getItem("userToken")}`,
+          },
         })
         .then(function (response) {
-          this.todos.push(response);
+          this.todos.push(response.data);
+          console.log(response);
         })
         .catch(function (error) {
           console.log(error);
@@ -202,26 +205,47 @@ export default {
     async sendPosts() {
       for (let i = 0; i < this.todos.lenght; i++) {
         const data = await axios
-          .post("http://localhost:5000/api/toDoItems", {
-            id: this.todos[i].id,
-            content: this.todos[i].content,
-            inProgress: this.todos[i].inProgress,
-            date: this.todos[i].date,
-            token: localStorage.getItem("userToken"),
-          })
+          .post(
+            "http://localhost:5000/api/toDoItems",
+            {
+              id: this.todos[i].id,
+              content: this.todos[i].content,
+              inProgress: this.todos[i].inProgress,
+              date: this.todos[i].date,
+            },
+            {
+              headers: {
+                Authorization: `Bearer${localStorage.getItem("userToken")}`,
+              },
+            }
+          )
+          .then(function (response) {
+          console.log(response);
+        })
           .catch(function (error) {
             console.log(error);
           });
+          
       }
     },
     async sendPost(todo) {
       const data = await axios
-        .post("http://localhost:5000/api/toDoItem", {
-          id: this.todo.id,
-          content: this.todo.content,
-          inProgress: this.todo.inProgress,
-          date: this.todo.date,
-          token: localStorage.getItem("userToken"),
+        .post(
+          "http://localhost:5000/api/toDoItem",
+          {
+            id: this.todo.id,
+            content: this.todo.content,
+            inProgress: this.todo.inProgress,
+            date: this.todo.date,
+          },
+          {
+            headers: {
+              Authorization: `Bearer${localStorage.getItem("userToken")}`,
+            },
+          }
+        )
+        .then(function (response) {
+          console.log(response);
         })
         .catch(function (error) {
           console.log(error);
@@ -229,12 +253,22 @@ export default {
     },
     async changePost(todo) {
       const data = await axios
-        .put(`http://localhost:5000/api/toDoItem/${todo.id}`, {
-          id: this.todo.id,
-          content: this.todo.content,
-          inProgress: this.todo.inProgress,
-          date: this.todo.date,
-          token: localStorage.getItem("userToken"),
+        .put(
+          `http://localhost:5000/api/toDoItem/${todo.id}`,
+          {
+            id: this.todo.id,
+            content: this.todo.content,
+            inProgress: this.todo.inProgress,
+            date: this.todo.date,
+          },
+          {
+            headers: {
+              Authorization: `Bearer${localStorage.getItem("userToken")}`,
+            },
+          }
+        )
+        .then(function (response) {
+          console.log(response);
         })
         .catch(function (error) {
           console.log(error);
@@ -243,7 +277,12 @@ export default {
     async deletePost(theId) {
       const data = await axios
         .delete(`http://localhost:5000/api/toDoItem/${theId}`, {
-          token: localStorage.getItem("userToken"),
+          headers: {
+            Authorization: `Bearer${localStorage.getItem("userToken")}`,
+          },
+        })
+        .then(function (response) {
+          console.log(response);
         })
         .catch(function (error) {
           console.log(error);
