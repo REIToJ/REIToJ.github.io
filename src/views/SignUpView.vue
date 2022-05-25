@@ -2,7 +2,10 @@
   <div class="container">
     <div class="row align-items-center min-vh-100">
       <div
-        class="col-12 col-sm-8 col-md-6 col-lg-4 offset-0 offset-sm-2 offset-md-3 offset-lg-4"
+        class="
+          col-12 col-sm-8 col-md-6 col-lg-4
+          offset-0 offset-sm-2 offset-md-3 offset-lg-4
+        "
       >
         <form @submit.prevent="signUpWithEmailAndPassword">
           <div class="mb-3 text-center">
@@ -70,70 +73,36 @@
 </template>
 
 <script>
-    import {reactive} from 'vue';
-    import {useRouter} from "vue-router";
-    import axios from "axios";
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
 export default {
   name: "SignUpView",
   data() {
     return {
       email: "",
-      username:"",
+      username: "",
       password: "",
       isPasswordVisible: false,
     };
   },
   methods: {
+    async signUpWithEmailAndPassword() {
+      const data = await axios
+        .post("http://localhost:5000/api/Authentication/register", {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
 
-      async signUpWithEmailAndPassword() {
-        const data = await axios.post(
-            'http://localhost:5000/api/Authentication/register',
-            {username:this.username,
-            email:this.email,
-            password:this.password})
-              .then(function (response) {
-              console.log(response);
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-          
-        await this.$router.push('/sign-in')
-      },
-    }
-  }
-  // setup() {
-
-  //   const data = reactive({
-  //     email: '',
-  //     username:'',
-  //     password: ''
-  //   });
-  //   const router = useRouter();
-  //   const signUpWithEmailAndPassword = async () => {
-  //     await fetch('http://localhost:5000/api/Authentication/register', {
-  //       method: 'POST',
-  //       mode: 'no-cors',
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: JSON.stringify(data)
-  //     });
-  //     await router.push('/sign-in');
-  //   }
-  //    return {
-  //     data,
-  //     signUpWithEmailAndPassword
-  //   }
-  // },
-  // methods: {
-  //   async signUpWithEmailAndPassword(event) {
-  //     event.preventDefault();
-
-  //     const formData = {
-  //       email: this.email,
-  //       password: this.password,
-  //     };
-  //       console.log(formData) 
-  //   },
-  // },
-//};
+      await this.$router.push("/");
+    },
+  },
+};
 </script>
